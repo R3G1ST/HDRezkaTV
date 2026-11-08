@@ -25,8 +25,8 @@ android {
         applicationId = "com.hdrezka.tv"
         minSdk = 23
         targetSdk = 35
-        versionCode = 57
-        versionName = "0.43.3"
+        versionCode = 58
+        versionName = "0.43.4"
     }
 
     // Личная сборка для сайдлоада: release оптимизирован R8
@@ -54,8 +54,7 @@ android {
         }
         create("personal") {
             dimension = "edition"
-            applicationIdSuffix = ".personal"
-            resValue("string", "app_name", "HDrezka TV Personal")
+            resValue("string", "app_name", "HDrezka TV")
             buildConfigField("boolean", "EMBEDDED_PERSONAL", "true")
             buildConfigField("String", "EMBEDDED_GITHUB_OWNER", quoted(secret("GITHUB_OWNER")))
             buildConfigField("String", "EMBEDDED_GITHUB_REPO", quoted(secret("GITHUB_REPO")))
