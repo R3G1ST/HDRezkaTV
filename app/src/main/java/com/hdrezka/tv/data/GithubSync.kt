@@ -1,7 +1,10 @@
 package com.hdrezka.tv.data
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Base64
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -18,7 +21,9 @@ import java.util.concurrent.TimeUnit
 data class GithubSyncConfig(
     val owner: String,
     val repo: String,
-    val token: String
+    val token: String,
+    val refreshToken: String? = null,
+    val expiresAt: Long = 0L
 ) {
     val isReady: Boolean
         get() = owner.isNotBlank() && repo.isNotBlank() && token.isNotBlank()
@@ -38,55 +43,86 @@ data class PullSummary(
 )
 
 object GithubSyncConfigStore {
-    private const val PREFS = "github_sync"
+    private const val PREFS = "github_sync_secure"
+    private const val LEGACY_PREFS = "github_sync"
+
+    private fun prefs(context: Context): SharedPreferences {
+        return runCatching {
+            val masterKey = MasterKey.Builder(context)
+                .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+                .build()
+            EncryptedSharedPreferences.create(
+                context,
+                PREFS,
+                masterKey,
+                EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            )
+        }.getOrElse {
+            context.getSharedPreferences(LEGACY_PREFS, Context.MODE_PRIVATE)
+        }
+    }
+
+    private fun legacy(context: Context): SharedPreferences =
+        context.getSharedPreferences(LEGACY_PREFS, Context.MODE_PRIVATE)
 
     fun load(context: Context): GithubSyncConfig? {
-        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val owner = prefs.getString("owner", "").orEmpty().trim()
-        val repo = prefs.getString("repo", "").orEmpty().trim()
-        val token = prefs.getString("token", "").orEmpty().trim()
-        if (owner.isBlank() || repo.isBlank() || token.isBlank()) return null
-        return GithubSyncConfig(owner, repo, token)
+        val prefs = prefs(context)
+        var owner = prefs.getString("owner", "").orEmpty().trim()
+        var repo = prefs.getString("repo", "").orEmpty().trim()
+        var token = prefs.getString("token", "").orEmpty().trim()
+        var refresh = prefs.getString("refreshToken", "").orEmpty().trim()
+        var expires = prefs.getLong("expiresAt", 0L)
+        if (owner.isBlank() || repo.isBlank() || token.isBlank()) {
+            val old = legacy(context)
+            owner = old.getString("owner", "").orEmpty().trim()
+            repo = old.getString("repo", "").orEmpty().trim()
+            token = old.getString("token", "").orEmpty().trim()
+            if (owner.isNotBlank() && repo.isNotBlank() && token.isNotBlank()) {
+                save(context, GithubSyncConfig(owner, repo, token))
+            } else {
+                return null
+            }
+        }
+        return GithubSyncConfig(
+            owner = owner,
+            repo = repo,
+            token = token,
+            refreshToken = refresh.takeIf { it.isNotBlank() },
+            expiresAt = expires
+        )
     }
 
     fun save(context: Context, config: GithubSyncConfig) {
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            .edit()
+        prefs(context).edit()
             .putString("owner", config.owner.trim())
             .putString("repo", config.repo.trim())
             .putString("token", config.token.trim())
+            .putString("refreshToken", config.refreshToken.orEmpty())
+            .putLong("expiresAt", config.expiresAt)
             .apply()
     }
 
     fun clear(context: Context) {
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            .edit()
-            .clear()
-            .apply()
+        prefs(context).edit().clear().apply()
+        legacy(context).edit().clear().apply()
     }
 
     fun lastSync(context: Context): Long =
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            .getLong("lastSync", 0L)
+        prefs(context).getLong("lastSync", 0L)
 
     fun lastError(context: Context): String? =
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            .getString("lastError", null)
+        prefs(context).getString("lastError", null)
             ?.takeIf { it.isNotBlank() }
 
     fun setStatus(context: Context, at: Long, error: String?) {
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-            .edit()
+        prefs(context).edit()
             .putLong("lastSync", at)
             .putString("lastError", error)
             .apply()
     }
 }
 
-/**
- * Синхронизация точных позиций просмотра через приватный репозиторий GitHub.
- * Файл: progress.json в основной ветке репозитория.
- */
 object GithubProgressSync {
     private const val FILE_PATH = "progress.json"
     private val syncMutex = Mutex()
@@ -99,7 +135,7 @@ object GithubProgressSync {
 
     suspend fun sync(context: Context): Result<SyncSummary> = withContext(Dispatchers.IO) {
         syncMutex.withLock {
-        val config = GithubSyncConfigStore.load(context)
+        val config = GithubOAuth.authorizedConfig(context)
             ?: return@withContext Result.failure(
                 IllegalStateException("GitHub-синхронизация не настроена")
             )
@@ -138,7 +174,7 @@ object GithubProgressSync {
      */
     suspend fun pull(context: Context): Result<PullSummary> = withContext(Dispatchers.IO) {
         syncMutex.withLock {
-            val config = GithubSyncConfigStore.load(context)
+            val config = GithubOAuth.authorizedConfig(context)
                 ?: return@withContext Result.failure(
                     IllegalStateException("GitHub-синхронизация не настроена")
                 )

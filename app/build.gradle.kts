@@ -25,8 +25,8 @@ android {
         applicationId = "com.hdrezka.tv"
         minSdk = 23
         targetSdk = 35
-        versionCode = 53
-        versionName = "0.42.0"
+        versionCode = 54
+        versionName = "0.43.0"
     }
 
     // Личная сборка для сайдлоада: release оптимизирован R8
@@ -50,6 +50,7 @@ android {
             buildConfigField("String", "EMBEDDED_GITHUB_REPO", quoted(""))
             buildConfigField("String", "EMBEDDED_GITHUB_TOKEN", quoted(""))
             buildConfigField("String", "EMBEDDED_COOKIES_B64", quoted(""))
+            buildConfigField("String", "GITHUB_OAUTH_CLIENT_ID", quoted("Ov23linCOGowYZuzx9Vh"))
         }
         create("personal") {
             dimension = "edition"
@@ -60,6 +61,7 @@ android {
             buildConfigField("String", "EMBEDDED_GITHUB_REPO", quoted(secret("GITHUB_REPO")))
             buildConfigField("String", "EMBEDDED_GITHUB_TOKEN", quoted(secret("GITHUB_TOKEN")))
             buildConfigField("String", "EMBEDDED_COOKIES_B64", quoted(secret("HDREZKA_COOKIES_B64")))
+            buildConfigField("String", "GITHUB_OAUTH_CLIENT_ID", quoted("Ov23linCOGowYZuzx9Vh"))
         }
     }
 
@@ -110,6 +112,8 @@ dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
+
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")

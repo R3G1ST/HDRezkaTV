@@ -146,6 +146,7 @@ fun SettingsScreen(
     val syncConfig = remember { GithubSyncConfigStore.load(context) }
     var githubConfig by remember { mutableStateOf(syncConfig) }
     var showGithubConnect by remember { mutableStateOf(false) }
+    var showGithubOAuth by remember { mutableStateOf(false) }
     var syncOwner by remember { mutableStateOf(syncConfig?.owner.orEmpty()) }
     var syncRepo by remember { mutableStateOf(syncConfig?.repo.orEmpty()) }
     var syncToken by remember { mutableStateOf(syncConfig?.token.orEmpty()) }
@@ -449,9 +450,14 @@ fun SettingsScreen(
                         SettingsButton(text = "Отключить", onClick = disconnectGithub)
                     } else {
                         SettingsButton(
-                            text = "Подключить",
-                            onClick = { showGithubConnect = true },
+                            text = "Войти через GitHub",
+                            onClick = { showGithubOAuth = true },
                             primary = true
+                        )
+                        Spacer(Modifier.width(10.dp))
+                        SettingsButton(
+                            text = "Вручную",
+                            onClick = { showGithubConnect = true }
                         )
                     }
                 }
@@ -932,6 +938,20 @@ fun SettingsScreen(
                 parentalPinSet = ParentalStore.hasPin(context)
             },
             onDismiss = { showPinSetup = false }
+        )
+    }
+    if (showGithubOAuth) {
+        GithubOAuthDialog(
+            onConnected = { config ->
+                showGithubOAuth = false
+                githubConfig = config
+                syncOwner = config.owner
+                syncRepo = config.repo
+                syncToken = config.token
+                syncMessage = "GitHub подключён"
+                startGithubSync(config)
+            },
+            onDismiss = { showGithubOAuth = false }
         )
     }
 }
