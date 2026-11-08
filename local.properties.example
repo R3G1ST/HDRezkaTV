@@ -1,0 +1,9 @@
+# Скопируйте в local.properties и укажите путь к Android SDK.
+sdk.dir=/path/to/Android/sdk
+
+# Эти параметры нужны только для личной сборки (flavor personal).
+# В публичный репозиторий их добавлять нельзя.
+# GITHUB_OWNER=
+# GITHUB_REPO=
+# GITHUB_TOKEN=
+# HDREZKA_COOKIES_B64=

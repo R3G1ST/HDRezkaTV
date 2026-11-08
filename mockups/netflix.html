@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>HDREZKA TV — стиль Netflix</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin:0; width:100%; height:100%; background:#0b0b0d; overflow:hidden; }
+  body { font-family:-apple-system,"SF Pro Display","Helvetica Neue",sans-serif; color:#fff; }
+  .screen { position:relative; width:100vw; height:100vh; overflow:hidden; }
+  .nav { position:absolute; z-index:5; top:0; left:0; right:0; display:flex; align-items:center; gap:26px;
+         padding:22px 56px; font-size:14px; color:rgba(255,255,255,.62);
+         background:linear-gradient(180deg,rgba(0,0,0,.82),transparent); }
+  .brand { font-weight:900; color:#fff; font-size:20px; letter-spacing:.3px; }
+  .brand span { color:#ff7a18; }
+  .nav .active { color:#fff; font-weight:700; }
+  .nav .right { margin-left:auto; display:flex; gap:18px; align-items:center; }
+  .avatar { width:28px; height:28px; border-radius:5px; background:linear-gradient(135deg,#ff7a18,#ffb15c); display:grid; place-items:center; font-size:11px; font-weight:800; }
+  .hero { position:absolute; z-index:2; inset:0 0 auto 0; height:58vh; overflow:hidden; }
+  .hero img { width:100%; height:100%; object-fit:cover; object-position:center 24%; filter:brightness(.55) saturate(.9); transform:scale(1.02); }
+  .shade { position:absolute; inset:0; background:
+    linear-gradient(90deg,rgba(11,11,13,.9) 0%,rgba(11,11,13,.25) 52%,rgba(11,11,13,.15) 100%),
+    linear-gradient(180deg,rgba(11,11,13,.1) 40%,#0b0b0d 100%); }
+  .hero-copy { position:absolute; z-index:3; left:56px; bottom:44px; max-width:560px; }
+  .eyebrow { font-size:11px; letter-spacing:2px; color:#ffb15c; font-weight:800; text-transform:uppercase; margin-bottom:10px; }
+  h1 { margin:0; font-size:54px; letter-spacing:-1.5px; line-height:.95; font-weight:800; }
+  .desc { margin-top:14px; font-size:13px; line-height:1.45; color:rgba(255,255,255,.75); max-width:520px; }
+  .meta { display:flex; gap:10px; align-items:center; margin-top:12px; font-size:12px; color:rgba(255,255,255,.7); }
+  .badge { border:1px solid rgba(255,255,255,.35); padding:1px 5px; border-radius:3px; font-size:10px; }
+  .actions { display:flex; gap:10px; margin-top:18px; }
+  .btn { border:0; border-radius:8px; padding:11px 18px; font-size:14px; font-weight:700; display:flex; align-items:center; gap:8px; }
+  .play { background:#fff; color:#111; }
+  .ghost { background:rgba(255,255,255,.16); color:#fff; }
+  .rows { position:absolute; z-index:4; left:56px; right:56px; bottom:30px; }
+  .row-block { margin-top:18px; }
+  .row-title { font-size:13px; font-weight:800; color:rgba(255,255,255,.8); margin-bottom:9px; letter-spacing:.2px; }
+  .row { display:flex; gap:10px; align-items:flex-end; }
+  .card { width:196px; flex:0 0 auto; position:relative; transition:transform .22s ease; }
+  .art { position:relative; width:100%; aspect-ratio:16/9; border-radius:8px; overflow:hidden; background:#18181d; border:1px solid rgba(255,255,255,.08); }
+  .art img { width:100%; height:100%; object-fit:cover; object-position:center 24%; display:block; }
+  .art:after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent 55%,rgba(0,0,0,.45)); }
+  .card.focused { transform:scale(1.12); z-index:5; }
+  .card.focused .art { border:2px solid rgba(255,255,255,.9); box-shadow:0 20px 50px rgba(0,0,0,.7); }
+  .hover-panel { position:absolute; left:0; right:0; bottom:0; padding:8px; display:none; gap:6px; background:linear-gradient(180deg,transparent,#0d0d10); }
+  .card.focused .hover-panel { display:flex; }
+  .icon { width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,.18); display:grid; place-items:center; font-size:10px; }
+  .progress { position:absolute; left:8px; right:8px; bottom:7px; height:2px; background:rgba(255,255,255,.25); border-radius:2px; }
+  .progress b { display:block; height:2px; background:#ff7a18; border-radius:2px; width:46%; }
+  .topten { display:flex; gap:4px; }
+  .top-card { position:relative; width:150px; display:flex; align-items:flex-end; }
+  .num { font-size:92px; line-height:.8; font-weight:900; color:#0b0b0d; -webkit-text-stroke:3px rgba(255,255,255,.8); margin-right:-18px; z-index:1; }
+  .top-card .art { width:108px; z-index:2; }
+  .note { position:absolute; right:56px; top:72px; z-index:6; font-size:10px; color:rgba(255,255,255,.3); letter-spacing:.5px; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <nav class="nav">
+    <div class="brand">HDREZKA <span>TV</span></div>
+    <div class="active">Главная</div><div>Фильмы</div><div>Сериалы</div><div>Новинки</div><div>Мой список</div>
+    <div class="right"><div class="avatar">НМ</div></div>
+  </nav>
+  <div class="note">Пример стиля · не финальный интерфейс</div>
+
+  <div class="hero">
+    <img src="posters/ideal.jpg">
+    <div class="shade"></div>
+    <div class="hero-copy">
+      <div class="eyebrow">Сериал · Новинка</div>
+      <h1>СЕКТОР 7</h1>
+      <div class="desc">После аварии на орбитальной станции инженер остаётся один в закрытом секторе. Связи нет, запасы на исходе, а по коридорам кто-то ходит.</div>
+      <div class="meta"><span>2026</span><span>·</span><span>4 сезона</span><span>·</span><span>4K</span><span class="badge">18+</span></div>
+      <div class="actions">
+        <button class="btn play">▶ Смотреть</button>
+        <button class="btn ghost">ⓘ Подробнее</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="rows">
+    <div class="row-block">
+      <div class="row-title">Продолжить просмотр</div>
+      <div class="row">
+        <div class="card">
+          <div class="art"><img src="posters/breaking.jpg"><div class="progress"><b></b></div></div>
+        </div>
+        <div class="card">
+          <div class="art"><img src="posters/ideal.jpg"><div class="progress"><b style="width:22%"></b></div></div>
+        </div>
+        <div class="card focused">
+          <div class="art">
+            <img src="posters/ali.jpg">
+            <div class="hover-panel"><div class="icon">▶</div><div class="icon">♡</div><div class="icon">＋</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="art"><img src="posters/volchonok.jpg"><div class="progress"><b style="width:61%"></b></div></div>
+        </div>
+        <div class="card">
+          <div class="art"><img src="posters/ali.jpg"><div class="progress"><b style="width:12%"></b></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row-block">
+      <div class="row-title">Топ-10 в России сегодня</div>
+      <div class="topten">
+        <div class="top-card"><div class="num">1</div><div class="art"><img src="posters/ideal.jpg"></div></div>
+        <div class="top-card"><div class="num">2</div><div class="art"><img src="posters/breaking.jpg"></div></div>
+        <div class="top-card"><div class="num">3</div><div class="art"><img src="posters/ali.jpg"></div></div>
+        <div class="top-card"><div class="num">4</div><div class="art"><img src="posters/volchonok.jpg"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

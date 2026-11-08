@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>HDREZKA TV — стиль Apple TV</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 100%; height: 100%; background: #07080b; overflow: hidden; }
+  body { font-family: -apple-system, "SF Pro Display", "Helvetica Neue", sans-serif; color: #fff; }
+  .screen { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(90deg, rgba(7,8,11,.15), rgba(7,8,11,.15)),
+      url('posters/ideal.jpg');
+    background-size: cover; background-position: center 28%;
+    filter: saturate(.9) brightness(.62);
+    transform: scale(1.04);
+  }
+  .hero-shade { position: absolute; inset: 0; background:
+    linear-gradient(180deg, rgba(7,8,11,.72) 0%, rgba(7,8,11,.05) 32%, rgba(7,8,11,.55) 72%, #07080b 100%); }
+  .nav { position: relative; z-index: 3; display: flex; align-items: center; gap: 34px; padding: 30px 64px; font-size: 17px; color: rgba(255,255,255,.72); }
+  .brand { font-weight: 900; letter-spacing: .5px; color: #fff; font-size: 21px; }
+  .brand span { color: #ff7a18; }
+  .nav .active { color:#fff; font-weight:600; }
+  .nav .right { margin-left:auto; display:flex; align-items:center; gap:16px; }
+  .avatar { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,#ff7a18,#ffb15c); display:grid; place-items:center; font-size:12px; font-weight:800; }
+  .hero { position:absolute; z-index:2; left:64px; bottom:286px; max-width:690px; }
+  .eyebrow { font-size:12px; letter-spacing:2.2px; font-weight:800; color:#ffb15c; text-transform:uppercase; margin-bottom:14px; }
+  h1 { margin:0; font-size:64px; line-height:.96; letter-spacing:-2px; font-weight:800; text-shadow:0 4px 28px rgba(0,0,0,.55); }
+  .meta { margin:18px 0 0; font-size:16px; color:rgba(255,255,255,.74); display:flex; gap:12px; align-items:center; }
+  .badge { border:1px solid rgba(255,255,255,.35); border-radius:4px; padding:2px 6px; font-size:11px; }
+  .actions { display:flex; gap:12px; margin-top:26px; }
+  .btn { border:0; border-radius:12px; padding:14px 22px; font-size:16px; font-weight:700; display:flex; align-items:center; gap:9px; }
+  .play { background:#ff7a18; color:#fff; box-shadow:0 10px 30px rgba(255,122,24,.24); }
+  .ghost { background:rgba(255,255,255,.14); color:#fff; backdrop-filter:blur(14px); }
+  .shelf { position:absolute; z-index:2; left:64px; right:64px; bottom:52px; }
+  .shelf-title { font-size:13px; font-weight:800; letter-spacing:2px; color:rgba(255,255,255,.62); text-transform:uppercase; margin-bottom:12px; }
+  .row { display:flex; gap:18px; }
+  .card { width:250px; flex:0 0 auto; }
+  .art { position:relative; width:100%; aspect-ratio:16/9; border-radius:14px; overflow:hidden; background:#16171c;
+         box-shadow:0 18px 38px rgba(0,0,0,.38); border:1px solid rgba(255,255,255,.08); }
+  .art img { width:100%; height:100%; object-fit:cover; object-position:center 24%; display:block; opacity:.92; }
+  .art:after { content:""; position:absolute; inset:0; background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.55)); }
+  .card.focused .art { border:3px solid #fff; box-shadow:0 24px 54px rgba(0,0,0,.6); transform:scale(1.06); }
+  .card.focused { z-index:2; }
+  .card { transition:transform .25s ease; }
+  .label { margin-top:9px; font-size:14px; font-weight:600; }
+  .sub { margin-top:3px; font-size:11px; color:rgba(255,255,255,.55); }
+  .progress { position:absolute; left:10px; right:10px; bottom:9px; height:3px; border-radius:3px; background:rgba(255,255,255,.25); z-index:2; }
+  .progress b { display:block; height:3px; width:38%; border-radius:3px; background:#ff7a18; }
+  .note { position:absolute; right:64px; top:100px; z-index:4; font-size:11px; color:rgba(255,255,255,.34); letter-spacing:.5px; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="hero-bg"></div>
+  <div class="hero-shade"></div>
+
+  <nav class="nav">
+    <div class="brand">HDREZKA <span>TV</span></div>
+    <div class="active">Главная</div>
+    <div>Фильмы</div>
+    <div>Сериалы</div>
+    <div>Поиск</div>
+    <div class="right"><div class="avatar">НМ</div></div>
+  </nav>
+  <div class="note">Пример стиля · не финальный интерфейс</div>
+
+  <section class="hero">
+    <div class="eyebrow">Новинка</div>
+    <h1>Идеальная<br>ложь</h1>
+    <div class="meta">
+      <span>2026</span><span>·</span><span>Дания</span><span>·</span><span>96 мин</span>
+      <span class="badge">16+</span><span>4K</span>
+    </div>
+    <div class="actions">
+      <button class="btn play">▶ Смотреть</button>
+      <button class="btn ghost">＋ В список</button>
+    </div>
+  </section>
+
+  <section class="shelf">
+    <div class="shelf-title">Продолжить</div>
+    <div class="row">
+      <div class="card focused">
+        <div class="art"><img src="posters/breaking.jpg"><div class="progress"><b></b></div></div>
+        <div class="label">Во все тяжкие</div><div class="sub">S1 · E1 · осталось 56 мин</div>
+      </div>
+      <div class="card">
+        <div class="art"><img src="posters/ideal.jpg"></div>
+        <div class="label">Идеальная ложь</div><div class="sub">осталось 95 мин</div>
+      </div>
+      <div class="card">
+        <div class="art"><img src="posters/ali.jpg"></div>
+        <div class="label">Али Джи: Кто я?</div><div class="sub">осталось 71 мин</div>
+      </div>
+      <div class="card">
+        <div class="art"><img src="posters/volchonok.jpg"></div>
+        <div class="label">Мокбастер</div><div class="sub">осталось 42 мин</div>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>
