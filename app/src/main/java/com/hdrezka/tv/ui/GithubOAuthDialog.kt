@@ -1,5 +1,6 @@
 package com.hdrezka.tv.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -26,14 +27,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import android.graphics.Bitmap
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.qrcode.QRCodeWriter
 import com.hdrezka.tv.data.GithubOAuth
 import com.hdrezka.tv.data.GithubSyncConfig
 import com.hdrezka.tv.data.GithubSyncConfigStore
@@ -93,7 +99,7 @@ fun GithubOAuthDialog(
                     .width(620.dp)
                     .background(SurfaceDark, RoundedCornerShape(20.dp))
                     .border(1.dp, Hairline, RoundedCornerShape(20.dp))
-                    .padding(30.dp),
+                    .padding(22.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -109,7 +115,7 @@ fun GithubOAuthDialog(
                     modifier = Modifier.padding(top = 4.dp)
                 )
 
-                Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(14.dp))
 
                 val current = device
                 if (current != null) {
@@ -134,17 +140,28 @@ fun GithubOAuthDialog(
                     Text(
                         current.userCode,
                         color = Color.White,
-                        fontSize = 42.sp,
+                        fontSize = 36.sp,
                         fontWeight = FontWeight.Black,
                         fontFamily = FontFamily.Monospace,
-                        letterSpacing = 4.sp,
+                        letterSpacing = 3.sp,
                         modifier = Modifier.padding(top = 6.dp)
+                    )
+                    Spacer(Modifier.height(10.dp))
+                    QrCode(
+                        url = current.verificationUri,
+                        size = 150.dp
+                    )
+                    Text(
+                        "Наведите камеру телефона на QR",
+                        color = TextSecondary,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(top = 8.dp)
                     )
                 } else {
                     CircularProgressIndicator(color = Accent)
                 }
 
-                Spacer(Modifier.height(18.dp))
+                Spacer(Modifier.height(10.dp))
                 if (error != null) {
                     Text(
                         error!!,
@@ -164,7 +181,7 @@ fun GithubOAuthDialog(
                     }
                 }
 
-                Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(14.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     if (error != null) {
                         TvButton(
@@ -177,5 +194,43 @@ fun GithubOAuthDialog(
                 }
             }
         }
+    }
+}
+
+
+@Composable
+private fun QrCode(url: String, size: Dp) {
+    val bitmap = remember(url) {
+        runCatching {
+            val pixels = 640
+            val matrix = QRCodeWriter().encode(
+                url,
+                BarcodeFormat.QR_CODE,
+                pixels,
+                pixels
+            )
+            val bmp = Bitmap.createBitmap(pixels, pixels, Bitmap.Config.ARGB_8888)
+            for (x in 0 until pixels) {
+                for (y in 0 until pixels) {
+                    bmp.setPixel(
+                        x,
+                        y,
+                        if (matrix[x, y]) android.graphics.Color.BLACK
+                        else android.graphics.Color.WHITE
+                    )
+                }
+            }
+            bmp
+        }.getOrNull()
+    }
+    if (bitmap != null) {
+        Image(
+            bitmap = bitmap.asImageBitmap(),
+            contentDescription = "QR-код для входа через GitHub",
+            modifier = Modifier
+                .size(size)
+                .background(Color.White, RoundedCornerShape(12.dp))
+                .padding(8.dp)
+        )
     }
 }

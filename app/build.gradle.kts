@@ -25,8 +25,8 @@ android {
         applicationId = "com.hdrezka.tv"
         minSdk = 23
         targetSdk = 35
-        versionCode = 54
-        versionName = "0.43.0"
+        versionCode = 55
+        versionName = "0.43.1"
     }
 
     // Личная сборка для сайдлоада: release оптимизирован R8
@@ -114,6 +114,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
 
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
+    implementation("com.google.zxing:core:3.5.3")
 
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
