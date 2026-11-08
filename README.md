@@ -30,7 +30,7 @@
 2. Установите на Android TV через ADB:
 
 ```bash
-adb install -r HDRezkaTV-0.43.2.apk
+adb install -r HDRezkaTV-0.43.3.apk
 ```
 
 Или откройте APK через файловый менеджер на телевизоре.

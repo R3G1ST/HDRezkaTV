@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -292,7 +293,6 @@ fun SettingsScreen(
     }
 
     val settingsScroll = rememberScrollState()
-    val footerFocus = remember { FocusRequester() }
 
     Column(
         modifier = Modifier
@@ -737,28 +737,15 @@ fun SettingsScreen(
         }
 
         Box {
-            Row(
-                Modifier
+            Text(
+                "HDrezka TV ${BuildConfig.VERSION_NAME} · Google TV",
+                color = TextSecondary,
+                fontSize = 13.sp,
+                modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 30.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    "HDrezka TV ${BuildConfig.VERSION_NAME} · Google TV",
-                    color = TextSecondary,
-                    fontSize = 13.sp,
-                    modifier = Modifier.weight(1f)
-                )
-                SettingsButton(
-                    text = "Наверх",
-                    focusRequester = footerFocus,
-                    onClick = {
-                        scope.launch {
-                            settingsScroll.animateScrollTo(0)
-                        }
-                    }
-                )
-            }
+                    .focusable()
+                    .padding(bottom = 30.dp)
+            )
         }
     }
 

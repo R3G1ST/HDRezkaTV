@@ -25,8 +25,8 @@ android {
         applicationId = "com.hdrezka.tv"
         minSdk = 23
         targetSdk = 35
-        versionCode = 56
-        versionName = "0.43.2"
+        versionCode = 57
+        versionName = "0.43.3"
     }
 
     // Личная сборка для сайдлоада: release оптимизирован R8
