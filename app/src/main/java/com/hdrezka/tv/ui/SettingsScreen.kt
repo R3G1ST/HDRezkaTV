@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -289,14 +291,18 @@ fun SettingsScreen(
         }
     }
 
-    LazyColumn(
+    val settingsScroll = rememberScrollState()
+    val footerFocus = remember { FocusRequester() }
+
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFF101014))
-            .padding(horizontal = 40.dp, vertical = 20.dp),
+            .padding(horizontal = 40.dp, vertical = 20.dp)
+            .verticalScroll(settingsScroll),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        item(key = "header") {
+        Box {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column {
                     Text(
@@ -322,7 +328,7 @@ fun SettingsScreen(
             }
         }
 
-        item(key = "account") {
+        Box {
             SettingsCard(title = "АККАУНТ", icon = Icons.Filled.Person) {
                 if (account == null) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -464,7 +470,7 @@ fun SettingsScreen(
             }
         }
 
-        item(key = "playback") {
+        Box {
             SettingsCard(title = "ВОСПРОИЗВЕДЕНИЕ", icon = Icons.Filled.PlayArrow) {
                 Column {
                     Text(
@@ -537,7 +543,7 @@ fun SettingsScreen(
             }
         }
 
-        item(key = "parental") {
+        Box {
             SettingsCard(title = "РОДИТЕЛЬСКИЙ КОНТРОЛЬ", icon = Icons.Filled.Lock) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
@@ -580,7 +586,7 @@ fun SettingsScreen(
             }
         }
 
-        item(key = "mirrors") {
+        Box {
             SettingsCard(title = "ЗЕРКАЛА И СВЯЗЬ", icon = Icons.Filled.Place) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(Modifier.weight(1f)) {
@@ -669,7 +675,7 @@ fun SettingsScreen(
             }
         }
 
-        item(key = "reminders") {
+        Box {
             SettingsCard(title = "НАПОМИНАНИЯ", icon = Icons.Filled.Notifications) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
@@ -690,7 +696,7 @@ fun SettingsScreen(
             }
         }
 
-        item(key = "data") {
+        Box {
             SettingsCard(title = "ДАННЫЕ", icon = Icons.Filled.Delete) {
                 DataRow(
                     title = "История просмотров",
@@ -715,7 +721,7 @@ fun SettingsScreen(
             }
         }
 
-        item(key = "about") {
+        Box {
             SettingsCard(title = "О ПРИЛОЖЕНИИ", icon = Icons.Filled.Info) {
                 AboutRow("Версия", BuildConfig.VERSION_NAME)
                 SettingsDivider()
@@ -723,17 +729,36 @@ fun SettingsScreen(
                 SettingsDivider()
                 AboutRow("Платформа", "Android ${Build.VERSION.RELEASE}")
                 SettingsDivider()
-                AboutRow("Плеер", if (vimuInstalled) "Vimu + встроенный" else "Встроенный")
+                AboutRow(
+                    "Плеер",
+                    if (vimuInstalled) "Встроенный · Vimu опция" else "Встроенный"
+                )
             }
         }
 
-        item(key = "footer") {
-            Text(
-                "HDrezka TV ${BuildConfig.VERSION_NAME} · Google TV",
-                color = TextSecondary,
-                fontSize = 13.sp,
-                modifier = Modifier.padding(bottom = 30.dp)
-            )
+        Box {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 30.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    "HDrezka TV ${BuildConfig.VERSION_NAME} · Google TV",
+                    color = TextSecondary,
+                    fontSize = 13.sp,
+                    modifier = Modifier.weight(1f)
+                )
+                SettingsButton(
+                    text = "Наверх",
+                    focusRequester = footerFocus,
+                    onClick = {
+                        scope.launch {
+                            settingsScroll.animateScrollTo(0)
+                        }
+                    }
+                )
+            }
         }
     }
 
